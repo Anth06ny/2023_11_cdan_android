@@ -25,11 +25,11 @@ class MainActivity : ComponentActivity() {
                     Greeting("Android")
                 }
 
-                main()
             }
         }
     }
 }
+
 
 @Composable
 fun Greeting(name: String, modifier: Modifier = Modifier) {

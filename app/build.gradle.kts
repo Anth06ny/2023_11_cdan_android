@@ -63,4 +63,10 @@ dependencies {
     androidTestImplementation("androidx.compose.ui:ui-test-junit4")
     debugImplementation("androidx.compose.ui:ui-tooling")
     debugImplementation("androidx.compose.ui:ui-test-manifest")
+
+    //pour faire des requetes http
+    implementation("com.squareup.okhttp3:okhttp:+")
+
+    implementation("com.google.code.gson:gson:2.3")
+
 }

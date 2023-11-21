@@ -9,7 +9,6 @@ public class Temp {
 
         System.out.println(res);
 
-
-
+        CarBean car = new CarBean("Seat", "Leon");
     }
 }
