@@ -25,6 +25,16 @@ object WeatherAPI {
         return data
     }
 
+    fun loadUser(): UserBean {
+        //Eventuel contrôle
+        //Réaliser la requête.
+        val json: String = sendGet("https://www.amonteiro.fr/api/randomuser")
+
+        //Parser le JSON avec le bon bean et GSON
+        return gson.fromJson(sendGet("https://www.amonteiro.fr/api/randomuser"), UserBean::class.java)
+    }
+
+
 
     fun sendGet(url: String): String {
         println("url : $url")

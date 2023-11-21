@@ -7,4 +7,9 @@ fun main() {
     var cityName = "Nice"
     var weather = WeatherAPI.loadWeather(cityName)
     println("Il fait ${weather.main.temp}° à ${weather.name} avec un vent de ${weather.wind.speed} m/s")
+
+    var user = WeatherAPI.loadUser()
+
+    println("${user.name} ${user.age} ses contactes : \nmail : ${user.coord?.mail ?: "-"}" +
+            "\nPhone : ${user.coord?.phone ?: "-"}")
 }

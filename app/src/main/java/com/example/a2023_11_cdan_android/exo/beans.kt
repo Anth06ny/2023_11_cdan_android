@@ -9,20 +9,29 @@ fun main() {
 
 //    var house = HouseBean(10,20,"Bleu")
 //    house.print()
-
-    val therm = ThermometerBean(-20, 50, 0)
-    println("Température de ${therm.value}") // 0
-    therm.value = 18
-    println("Température de ${therm.value}") // 18
-    therm.value = -35
-    //La valeur dépassant la borne min, on garde le min
-    println("Température de ${therm.value}") // -20
-
-    //Pour les plus rapides :
-    val therm2 = ThermometerBean(-20, 50, 80)
-    println("Température de ${therm2.value}") // 50
+    val randomName = RandomName()
+    randomName.add("bobby")
+    repeat(10) {
+        println(randomName.nextDiff() + " ")
+    }
 
 }
+/* -------------------------------- */
+// USER
+/* -------------------------------- */
+data class UserBean(
+    val age: Int,
+    val coord: Coord?,
+    val id: Int,
+    val img: String?,
+    val login: String,
+    val name: String
+)
+
+data class Coord(
+    val mail: String?,
+    val phone: String?
+)
 
 /* -------------------------------- */
 // API Wheater
@@ -35,6 +44,33 @@ data class WindBean(var speed: Double)
 /* -------------------------------- */
 // Exo
 /* -------------------------------- */
+
+class RandomName(){
+
+    private val list = arrayListOf("Bobby", "Titi", "Gustave")
+    private var oldValue = ""
+
+    fun add(name:String?)=  if(!name.isNullOrBlank() && name !in list) list.add(name) else false
+
+    fun next() = list.random()
+    fun next2() = Pair(nextDiff(), nextDiff())
+
+
+    fun nextDiffv2(): String {
+        return list.filter { it != oldValue }.random().also { oldValue = it  }
+    }
+    fun nextDiff(): String {
+        var newValue = next()
+        while(newValue == oldValue){
+            newValue = next()
+        }
+        oldValue = newValue
+
+        return newValue
+    }
+
+
+}
 
 class ThermometerBean(val min: Int, val max: Int, value: Int) {
     var value = value.coerceIn(min, max)
