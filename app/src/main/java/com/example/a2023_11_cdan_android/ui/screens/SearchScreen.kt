@@ -1,7 +1,9 @@
 package com.example.a2023_11_cdan_android.ui.screens
 
+import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -25,6 +27,10 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
@@ -57,16 +63,29 @@ fun SearchScreenPreview() {
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun SearchScreen(modifier: Modifier = Modifier) {
+
+    //Etat
+    var searchText by remember { mutableStateOf("") }
+
+    //Données
+    var filterList = pictureList.filter { it.text.contains(searchText, true) }
+
     Column(modifier) {
-        SearchBar()
+
+
+        SearchBar(
+            texte = searchText,
+            onValueChange = {
+                searchText =it
+            }
+        )
         Spacer(Modifier.size(8.dp))
         LazyColumn(
             verticalArrangement = Arrangement.spacedBy(8.dp),
             modifier = Modifier.weight(1f)
-
         ) {
-            items(pictureList.size) {
-                PictureRowItem(pictureList[it], modifier = Modifier.background(Color.White))
+            items(filterList.size) {
+                PictureRowItem(filterList[it], modifier = Modifier.background(Color.White))
             }
         }
 
@@ -76,7 +95,9 @@ fun SearchScreen(modifier: Modifier = Modifier) {
             modifier = Modifier.fillMaxWidth()
         ) {
             Button(
-                onClick = { /* Do something! */ },
+                onClick = {
+                          searchText = ""
+                },
                 contentPadding = ButtonDefaults.ButtonWithIconContentPadding
             ) {
                 Icon(
@@ -109,10 +130,12 @@ fun SearchScreen(modifier: Modifier = Modifier) {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SearchBar(modifier: Modifier = Modifier) {
+fun SearchBar(modifier: Modifier = Modifier,texte :String,  onValueChange: (String) -> Unit ) {
+
+
     TextField(
-        value = "", //Valeur par défaut
-        onValueChange = { newValue -> }, //Action
+        value = texte, //Valeur par défaut
+        onValueChange = onValueChange, //Action
         leadingIcon = { //Image d'icone
             Icon(
                 imageVector = Icons.Default.Search,
@@ -134,7 +157,13 @@ fun SearchBar(modifier: Modifier = Modifier) {
 @Composable
 fun PictureRowItem(data: PictureData, modifier: Modifier = Modifier) {
 
-    Row(modifier = modifier.height(100.dp)) {
+    //Etat
+    var fullText by remember {mutableStateOf(false) }
+
+    //Donnée
+    val textToShow = if(fullText) data.longText else data.longText.take(15)
+
+    Row(modifier = modifier) {
 
         GlideImage(
             model = data.url,
@@ -147,9 +176,14 @@ fun PictureRowItem(data: PictureData, modifier: Modifier = Modifier) {
             modifier = Modifier
                 .heightIn(max = 100.dp) //Sans hauteur il prendra tous l'écran
                 .widthIn(max = 100.dp)
+
         )
 
-        Column(modifier = Modifier.fillMaxWidth()) {
+        Column(modifier = Modifier.fillMaxWidth()
+            .clickable {
+                fullText = !fullText
+            }
+        ) {
             Text(
                 text = data.text,
                 color = Color.Blue,
@@ -157,8 +191,9 @@ fun PictureRowItem(data: PictureData, modifier: Modifier = Modifier) {
 
             )
             Text(
-                text = data.longText.take(15),
+                text = textToShow,
                 fontSize = 14.sp,
+                modifier = Modifier.animateContentSize()
             )
         }
     }
