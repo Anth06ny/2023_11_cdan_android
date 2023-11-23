@@ -55,9 +55,17 @@ data class Coord(
 // API Wheater
 /* -------------------------------- */
 
-data class WeatherBean(var main : TempBean,var wind : WindBean,var name : String)
+data class WeatherAroundResult(var list : List<WeatherBean>)
+
+data class WeatherBean(var main : TempBean,var wind : WindBean,var name : String, var weather : List<DescriptionBean>)
 data class TempBean(var temp: Double)
 data class WindBean(var speed: Double)
+
+data class DescriptionBean(
+    var description: String,
+    var icon: String,
+    var main: String
+)
 
 /* -------------------------------- */
 // Exo

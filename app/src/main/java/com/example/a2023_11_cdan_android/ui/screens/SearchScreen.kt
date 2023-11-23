@@ -71,7 +71,8 @@ fun SearchScreen(
     ) {
 
     //Données
-    var filterList = viewModel.myList.filter { it.text.contains(viewModel.searchText, true) }
+    //var filterList = viewModel.myList.filter { it.text.contains(viewModel.searchText, true) }
+    var filterList = viewModel.myList
 
     Column(modifier) {
 
