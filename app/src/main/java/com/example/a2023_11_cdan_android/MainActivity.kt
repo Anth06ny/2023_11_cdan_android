@@ -18,6 +18,7 @@ import com.example.a2023_11_cdan_android.ui.Routes
 import com.example.a2023_11_cdan_android.ui.screens.DetailScreen
 import com.example.a2023_11_cdan_android.ui.screens.SearchScreen
 import com.example.a2023_11_cdan_android.ui.theme._2023_11_cdan_androidTheme
+import com.example.a2023_11_cdan_android.viewmodel.MainViewModel
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -37,13 +38,14 @@ class MainActivity : ComponentActivity() {
 fun AppNavigation() {
 
     val navController : NavHostController = rememberNavController()
+    val viewModel: MainViewModel = androidx.lifecycle.viewmodel.compose.viewModel()
 
     //Import version avec Composable
     NavHost(navController = navController, startDestination = Routes.SearchScreen.route) {
         //Route 1 vers notre SearchScreen
         composable(Routes.SearchScreen.route) {
             //on peut passer le navController à un écran s'il déclenche des navigations
-            SearchScreen(navHostController = navController)
+            SearchScreen(navHostController = navController, viewModel = viewModel)
         }
 
         //Route 2 vers un écran de détail
@@ -52,7 +54,7 @@ fun AppNavigation() {
             arguments = listOf(navArgument("data") { type = NavType.IntType })
         ) {
             val position = it.arguments?.getInt("data", 0 ) ?: 0
-            DetailScreen(position = position, navHostController = navController)
+            DetailScreen(position = position, navHostController = navController, viewModel = viewModel)
         }
     }
 }

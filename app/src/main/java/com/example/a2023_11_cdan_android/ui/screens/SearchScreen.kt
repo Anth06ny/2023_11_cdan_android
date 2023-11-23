@@ -45,6 +45,8 @@ import com.example.a2023_11_cdan_android.exo.PictureData
 import com.example.a2023_11_cdan_android.exo.pictureList
 import com.example.a2023_11_cdan_android.ui.Routes
 import com.example.a2023_11_cdan_android.ui.theme._2023_11_cdan_androidTheme
+import com.example.a2023_11_cdan_android.viewmodel.MainViewModel
+import java.util.Locale.filter
 
 @Preview(
     showBackground = true,
@@ -62,21 +64,22 @@ fun SearchScreenPreview() {
 //Composable représentant l'ensemble de l'écran
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun SearchScreen(modifier: Modifier = Modifier, navHostController: NavHostController?= null) {
-
-    //Etat
-    var searchText by remember { mutableStateOf("") }
+fun SearchScreen(
+    modifier: Modifier = Modifier,
+    navHostController: NavHostController?= null,
+    viewModel: MainViewModel = androidx.lifecycle.viewmodel.compose.viewModel()
+    ) {
 
     //Données
-    var filterList = pictureList.filter { it.text.contains(searchText, true) }
+    var filterList = viewModel.myList.filter { it.text.contains(viewModel.searchText, true) }
 
     Column(modifier) {
 
 
         SearchBar(
-            texte = searchText,
+            texte = viewModel.searchText,
             onValueChange = {
-                searchText =it
+                viewModel.uploadSearchText(it)
             }
         )
         Spacer(Modifier.size(8.dp))
@@ -99,7 +102,7 @@ fun SearchScreen(modifier: Modifier = Modifier, navHostController: NavHostContro
         ) {
             Button(
                 onClick = {
-                          searchText = ""
+                    viewModel.uploadSearchText("")
                 },
                 contentPadding = ButtonDefaults.ButtonWithIconContentPadding
             ) {
@@ -113,7 +116,7 @@ fun SearchScreen(modifier: Modifier = Modifier, navHostController: NavHostContro
             }
 
             Button(
-                onClick = { /* Do something! */ },
+                onClick = { viewModel.loadData() },
                 contentPadding = ButtonDefaults.ButtonWithIconContentPadding
             ) {
                 Icon(

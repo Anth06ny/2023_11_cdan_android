@@ -27,6 +27,7 @@ import com.bumptech.glide.integration.compose.placeholder
 import com.example.a2023_11_cdan_android.R
 import com.example.a2023_11_cdan_android.exo.pictureList
 import com.example.a2023_11_cdan_android.ui.theme._2023_11_cdan_androidTheme
+import com.example.a2023_11_cdan_android.viewmodel.MainViewModel
 
 
 @Preview(
@@ -45,9 +46,12 @@ fun DetailScreenPreview() {
 //Composable représentant l'ensemble de l'écran
 @OptIn(ExperimentalFoundationApi::class, ExperimentalGlideComposeApi::class)
 @Composable
-fun DetailScreen(modifier: Modifier = Modifier, position: Int, navHostController: NavHostController? = null) {
+fun DetailScreen(modifier: Modifier = Modifier,
+                 position: Int, navHostController: NavHostController? = null,
+                 viewModel: MainViewModel = androidx.lifecycle.viewmodel.compose.viewModel()
+                 ) {
 
-    val pictureData = pictureList.getOrNull(position)
+    val pictureData = viewModel.myList.getOrNull(position)
 
     Column(modifier) {
         Text(
