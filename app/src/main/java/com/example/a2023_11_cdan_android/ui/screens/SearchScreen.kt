@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.widthIn
@@ -37,15 +36,16 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavHostController
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import com.bumptech.glide.integration.compose.placeholder
 import com.example.a2023_11_cdan_android.R
 import com.example.a2023_11_cdan_android.exo.PictureData
 import com.example.a2023_11_cdan_android.exo.pictureList
+import com.example.a2023_11_cdan_android.ui.Routes
 import com.example.a2023_11_cdan_android.ui.theme._2023_11_cdan_androidTheme
 
-//Affichage de la preview de l'écran
 @Preview(
     showBackground = true,
     showSystemUi = true
@@ -62,7 +62,7 @@ fun SearchScreenPreview() {
 //Composable représentant l'ensemble de l'écran
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun SearchScreen(modifier: Modifier = Modifier) {
+fun SearchScreen(modifier: Modifier = Modifier, navHostController: NavHostController?= null) {
 
     //Etat
     var searchText by remember { mutableStateOf("") }
@@ -85,7 +85,10 @@ fun SearchScreen(modifier: Modifier = Modifier) {
             modifier = Modifier.weight(1f)
         ) {
             items(filterList.size) {
-                PictureRowItem(filterList[it], modifier = Modifier.background(Color.White))
+                PictureRowItem(filterList[it],
+                    modifier = Modifier.background(Color.White),
+                    onPictureClick = {  navHostController?.navigate(Routes.DetailScreen.addParam(it))}
+                )
             }
         }
 
@@ -122,9 +125,6 @@ fun SearchScreen(modifier: Modifier = Modifier) {
                 Text("Load Data")
             }
         }
-
-
-        //Bouton x2
     }
 }
 
@@ -155,7 +155,7 @@ fun SearchBar(modifier: Modifier = Modifier,texte :String,  onValueChange: (Stri
 //Composable affichant 1 PictureData
 @OptIn(ExperimentalGlideComposeApi::class)
 @Composable
-fun PictureRowItem(data: PictureData, modifier: Modifier = Modifier) {
+fun PictureRowItem(data: PictureData, modifier: Modifier = Modifier, onPictureClick: () -> Unit = {  }) {
 
     //Etat
     var fullText by remember {mutableStateOf(false) }
@@ -167,7 +167,7 @@ fun PictureRowItem(data: PictureData, modifier: Modifier = Modifier) {
 
         GlideImage(
             model = data.url,
-            contentDescription = "coucou",
+            contentDescription = "",
             loading = placeholder(R.mipmap.ic_launcher_round), // Image de chargement
             // Image d'échec. Permet également de voir l'emplacement de l'image dans la Preview
             failure = placeholder(R.mipmap.ic_launcher),
@@ -176,10 +176,12 @@ fun PictureRowItem(data: PictureData, modifier: Modifier = Modifier) {
             modifier = Modifier
                 .heightIn(max = 100.dp) //Sans hauteur il prendra tous l'écran
                 .widthIn(max = 100.dp)
+                .clickable(onClick = onPictureClick)
 
         )
 
-        Column(modifier = Modifier.fillMaxWidth()
+        Column(modifier = Modifier
+            .fillMaxWidth()
             .clickable {
                 fullText = !fullText
             }
