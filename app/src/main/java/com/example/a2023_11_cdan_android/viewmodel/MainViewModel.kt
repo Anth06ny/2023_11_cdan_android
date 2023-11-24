@@ -22,6 +22,12 @@ class MainViewModel : ViewModel() {
     var searchText by mutableStateOf("")
         private set
 
+    var errorMessage by mutableStateOf("")
+
+    //Requête en cours
+    var runInProgress by mutableStateOf(false)
+        private set
+
     fun uploadSearchText(newText: String) {
         searchText = newText
     }
@@ -29,15 +35,28 @@ class MainViewModel : ViewModel() {
     fun loadData() {//Simulation de chargement de donnée
         _myList.clear()
 
-        viewModelScope.launch(Dispatchers.Default) {
-           val list: List<WeatherBean> =  WeatherAPI.loadWeatherAround(searchText)
+        runInProgress = true
+        errorMessage = ""
 
-            val res: List<PictureData> = list.map {
-                PictureData("https://openweathermap.org/img/wn/${it.weather.getOrNull(0)?.icon}@4x.png", it.name,
-                    "Il fait ${it.main.temp}° à ${it.name} avec un vent de ${it.wind.speed} m/s")
+        viewModelScope.launch(Dispatchers.Default) {
+            try {
+                val list: List<WeatherBean> = WeatherAPI.loadWeatherAround(searchText)
+
+                val res: List<PictureData> = list.map {
+                    PictureData(
+                        "https://openweathermap.org/img/wn/${it.weather.getOrNull(0)?.icon}@4x.png", it.name,
+                        "Il fait ${it.main.temp}° à ${it.name} avec un vent de ${it.wind.speed} m/s"
+                    )
+                }
+
+                _myList.addAll(res)
+            }
+            catch(e:Exception){
+                e.printStackTrace()
+                errorMessage = e.message ?: "Une erreur est survenue"
             }
 
-            _myList.addAll(res)
+            runInProgress = false
         }
 
 

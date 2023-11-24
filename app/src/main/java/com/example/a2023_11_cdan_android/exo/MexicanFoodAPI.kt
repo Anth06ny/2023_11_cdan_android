@@ -16,7 +16,7 @@ object MexicanFoodAPI {
     private val client = OkHttpClient()
     val gson = Gson()
 
-    fun loadMexicanFood(id: String): MexicanFoodBean? {
+    fun loadMexicanFood(id: String): MexicanFoodBean {
         //Eventuel contrôle
         //Réaliser la requête.
         val json: String = sendGet("/$id")

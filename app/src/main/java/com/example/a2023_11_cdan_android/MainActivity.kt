@@ -16,6 +16,7 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.example.a2023_11_cdan_android.ui.Routes
 import com.example.a2023_11_cdan_android.ui.screens.DetailScreen
+import com.example.a2023_11_cdan_android.ui.screens.MexicanFoodScreen
 import com.example.a2023_11_cdan_android.ui.screens.SearchScreen
 import com.example.a2023_11_cdan_android.ui.theme._2023_11_cdan_androidTheme
 import com.example.a2023_11_cdan_android.viewmodel.MainViewModel
@@ -55,6 +56,15 @@ fun AppNavigation() {
         ) {
             val position = it.arguments?.getInt("data", 0 ) ?: 0
             DetailScreen(position = position, navHostController = navController, viewModel = viewModel)
+        }
+
+        //Route 2 vers un écran de détail
+        composable(
+            route = Routes.MexicanScreen.route,
+            arguments = listOf(navArgument("foodId") { type = NavType.StringType })
+        ) {
+            val foodId = it.arguments?.getString("foodId", "" ) ?: ""
+            MexicanFoodScreen(foodId)
         }
     }
 }

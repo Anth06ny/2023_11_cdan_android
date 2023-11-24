@@ -10,15 +10,18 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Build
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Send
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -30,6 +33,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
@@ -42,11 +46,9 @@ import com.bumptech.glide.integration.compose.GlideImage
 import com.bumptech.glide.integration.compose.placeholder
 import com.example.a2023_11_cdan_android.R
 import com.example.a2023_11_cdan_android.exo.PictureData
-import com.example.a2023_11_cdan_android.exo.pictureList
 import com.example.a2023_11_cdan_android.ui.Routes
 import com.example.a2023_11_cdan_android.ui.theme._2023_11_cdan_androidTheme
 import com.example.a2023_11_cdan_android.viewmodel.MainViewModel
-import java.util.Locale.filter
 
 @Preview(
     showBackground = true,
@@ -66,9 +68,9 @@ fun SearchScreenPreview() {
 @Composable
 fun SearchScreen(
     modifier: Modifier = Modifier,
-    navHostController: NavHostController?= null,
+    navHostController: NavHostController? = null,
     viewModel: MainViewModel = androidx.lifecycle.viewmodel.compose.viewModel()
-    ) {
+) {
 
     //Données
     //var filterList = viewModel.myList.filter { it.text.contains(viewModel.searchText, true) }
@@ -84,6 +86,22 @@ fun SearchScreen(
             }
         )
         Spacer(Modifier.size(8.dp))
+
+        if(viewModel.errorMessage.isNotBlank()){
+            Text(
+                text = viewModel.errorMessage,
+                color = Color.White,
+                fontSize = 20.sp,
+                modifier = Modifier.background(Color.Red).fillMaxWidth().padding(8.dp)
+            )
+        }
+
+        if (viewModel.runInProgress) {
+            CircularProgressIndicator(
+                modifier = Modifier.align(CenterHorizontally),
+                color = MaterialTheme.colorScheme.primary //progress color
+            )
+        }
         LazyColumn(
             verticalArrangement = Arrangement.spacedBy(8.dp),
             modifier = Modifier.weight(1f)
@@ -91,7 +109,9 @@ fun SearchScreen(
             items(filterList.size) {
                 PictureRowItem(filterList[it],
                     modifier = Modifier.background(Color.White),
-                    onPictureClick = {  navHostController?.navigate(Routes.DetailScreen.addParam(it))}
+                    onPictureClick = {
+                        navHostController?.navigate(Routes.DetailScreen.addParam(it))
+                    }
                 )
             }
         }
@@ -128,13 +148,29 @@ fun SearchScreen(
                 Spacer(Modifier.size(ButtonDefaults.IconSpacing))
                 Text("Load Data")
             }
+
+            Button(
+                onClick = {
+                    navHostController?.navigate(Routes.MexicanScreen.foodId(viewModel.searchText))
+
+                },
+                contentPadding = ButtonDefaults.ButtonWithIconContentPadding
+            ) {
+                Icon(
+                    Icons.Filled.Build,
+                    contentDescription = "Localized description",
+                    modifier = Modifier.size(ButtonDefaults.IconSize)
+                )
+                Spacer(Modifier.size(ButtonDefaults.IconSpacing))
+                Text("MexicanFood")
+            }
         }
     }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SearchBar(modifier: Modifier = Modifier,texte :String,  onValueChange: (String) -> Unit ) {
+fun SearchBar(modifier: Modifier = Modifier, texte: String, onValueChange: (String) -> Unit) {
 
 
     TextField(
@@ -159,13 +195,13 @@ fun SearchBar(modifier: Modifier = Modifier,texte :String,  onValueChange: (Stri
 //Composable affichant 1 PictureData
 @OptIn(ExperimentalGlideComposeApi::class)
 @Composable
-fun PictureRowItem(data: PictureData, modifier: Modifier = Modifier, onPictureClick: () -> Unit = {  }) {
+fun PictureRowItem(data: PictureData, modifier: Modifier = Modifier, onPictureClick: () -> Unit = { }) {
 
     //Etat
-    var fullText by remember {mutableStateOf(false) }
+    var fullText by remember { mutableStateOf(false) }
 
     //Donnée
-    val textToShow = if(fullText) data.longText else data.longText.take(15)
+    val textToShow = if (fullText) data.longText else data.longText.take(15)
 
     Row(modifier = modifier) {
 
