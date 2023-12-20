@@ -132,3 +132,4 @@ data class CarBean(var marque: String, var model: String?) {
     var color = ""
 }
 
+data class MessageBean(var pseudo: String, var message : String)

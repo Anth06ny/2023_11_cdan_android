@@ -1,15 +1,39 @@
 package com.example.a2023_11_cdan_android.exo
 
-fun main() {
-    //var html = WeatherAPI.sendGet("https://www.google.fr")
-//    var html = WeatherAPI.sendGet("https://api.openweathermap.org/data/2.5/weather?q=Toulouse&appid=b80967f0a6bd10d23e44848547b26550&units=metric&lang=fr")
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 
-    var cityName = "Nice"
-    var weather = WeatherAPI.loadWeather(cityName)
-    println("Il fait ${weather.main.temp}° à ${weather.name} avec un vent de ${weather.wind.speed} m/s")
 
-    var user = WeatherAPI.loadUser()
-
-    println("${user.name} ${user.age} ses contactes : \nmail : ${user.coord?.mail ?: "-"}" +
-            "\nPhone : ${user.coord?.phone ?: "-"}")
+fun getWeathers(vararg cities:String) = flow<WeatherBean> {
+    cities.forEach {
+        emit(WeatherAPI.loadWeather(it))
+        delay(500)
+    }
 }
+
+
+fun main() {
+
+    runBlocking {
+
+        launch {
+            getWeathers("Toulouse", "Nice", "Paris", "Lyon")
+                .filter { it.wind.speed < 5 }
+                // Gestion des erreurs
+                .catch { e -> println("Erreur capturée: ${e.message}") }
+                .collect {
+                    println("it")
+                } // Démarre la collecte du Flow
+        }
+    }
+
+    println("fin")
+
+}
+
